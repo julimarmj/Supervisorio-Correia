@@ -63,19 +63,9 @@ namespace Supervisório___Correia.Properties {
         /// <summary>
         ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Esteira0 {
+        internal static System.Drawing.Bitmap Esteira_jpg {
             get {
-                object obj = ResourceManager.GetObject("Esteira0", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Esteira01 {
-            get {
-                object obj = ResourceManager.GetObject("Esteira01", resourceCulture);
+                object obj = ResourceManager.GetObject("Esteira.jpg", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -96,6 +86,16 @@ namespace Supervisório___Correia.Properties {
         internal static System.Drawing.Bitmap ON {
             get {
                 object obj = ResourceManager.GetObject("ON", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Seta {
+            get {
+                object obj = ResourceManager.GetObject("Seta", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -18,8 +18,9 @@ namespace Supervisório___Correia
         public delegate void OPC_Monitor();
         BackgroundWorker Monitor;
         BackgroundWorker ThUpdate;
+        bool SecClock;
         public Form1()
-        {
+        {  
             InitializeComponent();
             Monitor = new BackgroundWorker();
             Monitor.DoWork += OpcMonitor;
@@ -28,17 +29,40 @@ namespace Supervisório___Correia
             ThUpdate = new BackgroundWorker();
             ThUpdate.DoWork += Update;
             ThUpdate.RunWorkerAsync();
+
+            System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
+            timer.Interval = 1000; // 1 sec
+            timer.Tick += new EventHandler(Timer_Tick);
+            timer.Start();
+            
+        }
+        ~Form1() 
+        {
         }
 
-        private void btTeste_Click(object sender, EventArgs e)
+        public void Timer_Tick(object sender, EventArgs eArgs)
         {
-            Opc.Start = bool.Parse(tbTeste1.Text);
-            pbSF1.Image = Properties.Resources.OFF;
+            SecClock = !SecClock;
+        }
+        private void btOn_Click(object sender, EventArgs e)
+        {
+            Opc.Start = true;
+            Opc.WriteBlock();
         }
 
-        private void btCheck_Click(object sender, EventArgs e)
+        private void btOff_Click(object sender, EventArgs e)
         {
-            tbTeste1.Text = Opc.Start.ToString();
+            Opc.Start = false;
+            Opc.WriteBlock();
+        }
+        private void btRearm_Click(object sender, EventArgs e)
+        {
+            Opc.Reset = true;
+            Opc.WriteBlock();
+        }
+        private void btEmer_Click(object sender, EventArgs e)
+        {
+            Opc.Emergency = true;
         }
         private void OpcMonitor(object sender, DoWorkEventArgs e)
         {
@@ -51,10 +75,10 @@ namespace Supervisório___Correia
                 {
                     this.Invoke(read);
                     Thread.Sleep(200);
-                    this.Invoke(write);
                 }
                 catch (Exception)
                 {
+                    MessageBox.Show("Falha na leitura");
                 }
             }
         }
@@ -62,23 +86,56 @@ namespace Supervisório___Correia
         {
             while (true)
             {
-                //System.Drawing.SolidBrush myBrush = new System.Drawing.SolidBrush(System.Drawing.Color.Red);
-                //System.Drawing.Graphics formGraphics;
-                //formGraphics = this.CreateGraphics();
-                //formGraphics.FillRectangle(myBrush, new Rectangle(0, 0, 200, 300));
-                //formGraphics.FillRectangle(myBrush, new Rectangle(200, 200, 200, 300));
-                //myBrush.Dispose();
-                //formGraphics.Dispose();
-                
+                if (Opc.Busy && SecClock)
+                {
+                    this.Invoke(new MethodInvoker(() => pbBusy1.Visible = true));
+                    this.Invoke(new MethodInvoker(() => pbBusy2.Visible = true));
+                    this.Invoke(new MethodInvoker(() => pbBusy3.Visible = true));
+                }
+                else
+                {
+                    this.Invoke(new MethodInvoker(() => pbBusy1.Visible = false));
+                    this.Invoke(new MethodInvoker(() => pbBusy2.Visible = false));
+                    this.Invoke(new MethodInvoker(() => pbBusy3.Visible = false));
+                }
 
-                try
+                if (Opc.Start)
+                    this.Invoke(new MethodInvoker(() => pbMotor.Image = Properties.Resources.ON));
+                else
+                    this.Invoke(new MethodInvoker(() => pbMotor.Image = Properties.Resources.OFF));
+
+                if (Opc.Transparent)
+                    this.Invoke(new MethodInvoker(() => pbSC.Image = Properties.Resources.ON));
+                else
+                    this.Invoke(new MethodInvoker(() => pbSC.Image = Properties.Resources.OFF));
+
+                if (Opc.Opaque)
                 {
-                    this.Invoke(new MethodInvoker(() => this.tbTeste2.Text = Opc.Start.ToString()));
+                    this.Invoke(new MethodInvoker(() => pbSF1.Image = Properties.Resources.ON));
+                    this.Invoke(new MethodInvoker(() => pbSF2.Image = Properties.Resources.ON));
                 }
-                catch (Exception)
+                else
                 {
+                    this.Invoke(new MethodInvoker(() => pbSF1.Image = Properties.Resources.OFF));
+                    this.Invoke(new MethodInvoker(() => pbSF2.Image = Properties.Resources.OFF));
                 }
+
+                if (Opc.Error)
+                {
+                    this.Invoke(new MethodInvoker(() => lbDef.Visible = true));
+                    if (SecClock)    
+                        this.Invoke(new MethodInvoker(() => lbDef.ForeColor = System.Drawing.Color.Black));
+                    else
+                        this.Invoke(new MethodInvoker(() => lbDef.ForeColor = System.Drawing.Color.Red)); 
+                }
+                else
+                    this.Invoke(new MethodInvoker(() => lbDef.Visible = false));
+
+                this.Invoke(new MethodInvoker(() => lbTransp.Text = Opc.Number_Transparent.ToString()));
+                this.Invoke(new MethodInvoker(() => lbOpac.Text = Opc.Number_Opaque.ToString()));
+
             }
         }
+
     }
 }
