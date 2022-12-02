@@ -4,10 +4,12 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace Supervisório___Correia
 {
@@ -21,8 +23,6 @@ namespace Supervisório___Correia
         BackgroundWorker ThUpdate;
         bool SecClock;
         bool closed = false;
-
-        public event ValueUpdated ValueStart;
 
         public Form1()
         {  
@@ -94,9 +94,18 @@ namespace Supervisório___Correia
         private void Update(object sender, DoWorkEventArgs e)
         {
             Thread.Sleep(200);
+            bool _Start = Opc.Start;              //0
+            bool _Emergency = Opc.Emergency;          //1
+            bool _Opaque = Opc.Opaque;             //2
+            bool _Transparent = Opc.Transparent;        //3
+            bool _Error = Opc.Error;              //4
+            bool _Reset = Opc.Reset;              //5
+            bool _Busy = Opc.Busy;               //6
+            int _Number_Opaque = Opc.Number_Opaque;       //7
+            int _Number_Transparent = Opc.Number_Transparent;  //8
+
             while (!closed)
             {
-
                 if (Opc.Busy && SecClock)
                 {
                     this.Invoke(new MethodInvoker(() => pbBusy1.Visible = true));
@@ -116,17 +125,36 @@ namespace Supervisório___Correia
                     this.Invoke(new MethodInvoker(() => pbMotor.Image = Properties.Resources.OFF));
 
                 if (Opc.Transparent)
+                {
+                    if (Opc.Transparent != _Transparent)
+                    {
+                        _Transparent = Opc.Transparent;
+                        int aux = int.Parse(lbTranspTot.Text) + 1;
+                        this.Invoke(new MethodInvoker(() => lbTranspTot.Text = aux.ToString()));
+                    }
+
                     this.Invoke(new MethodInvoker(() => pbSC.Image = Properties.Resources.ON));
+                }
                 else
+                {
+                    _Transparent = Opc.Transparent;
                     this.Invoke(new MethodInvoker(() => pbSC.Image = Properties.Resources.OFF));
+                }
 
                 if (Opc.Opaque)
                 {
+                    if (Opc.Opaque != _Opaque)
+                    {
+                        _Opaque = Opc.Opaque;
+                        int aux = int.Parse(lbOpacTot.Text) + 1;
+                        this.Invoke(new MethodInvoker(() => lbOpacTot.Text = aux.ToString()));
+                    }
                     this.Invoke(new MethodInvoker(() => pbSF1.Image = Properties.Resources.ON));
                     this.Invoke(new MethodInvoker(() => pbSF2.Image = Properties.Resources.ON));
                 }
                 else
                 {
+                    _Opaque = Opc.Opaque;
                     this.Invoke(new MethodInvoker(() => pbSF1.Image = Properties.Resources.OFF));
                     this.Invoke(new MethodInvoker(() => pbSF2.Image = Properties.Resources.OFF));
                 }
@@ -141,10 +169,51 @@ namespace Supervisório___Correia
                 }
                 else
                     this.Invoke(new MethodInvoker(() => lbDef.Visible = false));
-
+                   
+                this.Invoke(new MethodInvoker(() => Opc.Reset = false));
                 this.Invoke(new MethodInvoker(() => lbTransp.Text = Opc.Number_Transparent.ToString()));
                 this.Invoke(new MethodInvoker(() => lbOpac.Text = Opc.Number_Opaque.ToString()));
 
+            }
+        }
+
+        public class VarMonitor
+        {
+            private bool _bVar;
+            public bool bVar
+            {
+                get { return _bVar; }   // get method
+            }
+            private int _iVar;
+            public int iVar
+            {
+                get { return _iVar; }   // get method
+            }
+            public bool ChangeOn;
+            public bool ChangeOff;
+            public bool changeVal;
+
+            public VarMonitor(bool bVar)
+            {
+                _bVar = bVar;
+            }
+            public VarMonitor(int iVar)
+            {
+                _iVar = iVar;
+            }
+
+            public void checkVar(bool bVar)
+            {
+                ChangeOn = _bVar != bVar & bVar == true;
+                ChangeOff = _bVar != bVar & bVar == false;
+
+                _bVar = bVar;
+            }
+            public void checkVar(int iVar)
+            {
+                changeVal = _iVar != iVar;
+
+                _iVar = iVar;
             }
         }
 

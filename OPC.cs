@@ -8,15 +8,15 @@ namespace Supervisório___Correia
 {
     internal class OPC
     {
-        public Boolean Start;
-        public Boolean Emergency;
-        public Boolean Opaque;
-        public Boolean Transparent;
-        public Boolean Error;
-        public Boolean Reset;
-        public Boolean Busy;
-        public int Number_Opaque;
-        public int Number_Transparent;
+        public bool Start;              //0
+        public bool Emergency;          //1
+        public bool Opaque;             //2
+        public bool Transparent;        //3
+        public bool Error;              //4
+        public bool Reset;              //5
+        public bool Busy;               //6
+        public int Number_Opaque;       //7
+        public int Number_Transparent;  //8
 
         private string[] items_id = { "Channel1.Device1.Start",
                                     "Channel1.Device1.Emergency",
