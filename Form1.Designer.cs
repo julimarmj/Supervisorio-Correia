@@ -191,9 +191,9 @@
             this.lbTranspTot.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbTranspTot.Location = new System.Drawing.Point(609, 46);
             this.lbTranspTot.Name = "lbTranspTot";
-            this.lbTranspTot.Size = new System.Drawing.Size(23, 18);
+            this.lbTranspTot.Size = new System.Drawing.Size(16, 18);
             this.lbTranspTot.TabIndex = 6;
-            this.lbTranspTot.Text = "00";
+            this.lbTranspTot.Text = "0";
             // 
             // label3
             // 
@@ -213,9 +213,9 @@
             this.lbOpacTot.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbOpacTot.Location = new System.Drawing.Point(609, 70);
             this.lbOpacTot.Name = "lbOpacTot";
-            this.lbOpacTot.Size = new System.Drawing.Size(23, 18);
+            this.lbOpacTot.Size = new System.Drawing.Size(16, 18);
             this.lbOpacTot.TabIndex = 4;
-            this.lbOpacTot.Text = "00";
+            this.lbOpacTot.Text = "0";
             // 
             // label2
             // 
@@ -245,9 +245,9 @@
             this.lbTransp.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbTransp.Location = new System.Drawing.Point(383, 46);
             this.lbTransp.Name = "lbTransp";
-            this.lbTransp.Size = new System.Drawing.Size(23, 18);
+            this.lbTransp.Size = new System.Drawing.Size(16, 18);
             this.lbTransp.TabIndex = 1;
-            this.lbTransp.Text = "00";
+            this.lbTransp.Text = "0";
             // 
             // lbOpac
             // 
@@ -257,9 +257,9 @@
             this.lbOpac.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbOpac.Location = new System.Drawing.Point(383, 68);
             this.lbOpac.Name = "lbOpac";
-            this.lbOpac.Size = new System.Drawing.Size(23, 18);
+            this.lbOpac.Size = new System.Drawing.Size(16, 18);
             this.lbOpac.TabIndex = 0;
-            this.lbOpac.Text = "00";
+            this.lbOpac.Text = "0";
             // 
             // pbBusy3
             // 
@@ -362,6 +362,7 @@
             this.Controls.Add(this.panel1);
             this.Name = "Form1";
             this.Text = "Correia";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.on_closing);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbBusy3)).EndInit();

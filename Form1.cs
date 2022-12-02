@@ -13,15 +13,22 @@ namespace Supervisório___Correia
 {
     public partial class Form1 : Form
     {
-        OPC Opc = new OPC();
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+        OPC Opc = new OPC();
         public delegate void OPC_Monitor();
         BackgroundWorker Monitor;
         BackgroundWorker ThUpdate;
         bool SecClock;
+        bool closed = false;
+
+        public event ValueUpdated ValueStart;
+
         public Form1()
         {  
             InitializeComponent();
+            log.Info("Programa Iniciado");
+
             Monitor = new BackgroundWorker();
             Monitor.DoWork += OpcMonitor;
             Monitor.RunWorkerAsync();
@@ -38,6 +45,7 @@ namespace Supervisório___Correia
         }
         ~Form1() 
         {
+            
         }
 
         public void Timer_Tick(object sender, EventArgs eArgs)
@@ -68,8 +76,9 @@ namespace Supervisório___Correia
         {
             Delegate read = new OPC_Monitor(Opc.ReadBlock);
             Delegate write = new OPC_Monitor(Opc.WriteBlock);
+            Thread.Sleep(200);
 
-            while (true)
+            while (!closed)
             {
                 try
                 {
@@ -84,8 +93,10 @@ namespace Supervisório___Correia
         }
         private void Update(object sender, DoWorkEventArgs e)
         {
-            while (true)
+            Thread.Sleep(200);
+            while (!closed)
             {
+
                 if (Opc.Busy && SecClock)
                 {
                     this.Invoke(new MethodInvoker(() => pbBusy1.Visible = true));
@@ -137,5 +148,22 @@ namespace Supervisório___Correia
             }
         }
 
+        private void on_closing(object sender, FormClosingEventArgs e)
+        {
+            closed = true;
+            var result = MessageBox.Show("Deseja sair?", "sair",
+                             MessageBoxButtons.YesNo,
+                             MessageBoxIcon.Question);
+
+            e.Cancel = (result == DialogResult.No);
+
+            if (result == DialogResult.No)
+            {
+                closed = true;
+
+            }else if(result == DialogResult.Yes)
+                log.Info("Programa Finalizado");
+
+        }
     }
 }
