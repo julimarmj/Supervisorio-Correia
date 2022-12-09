@@ -19,7 +19,6 @@ namespace Supervisório___Correia
 
         OPC Opc = new OPC();
         public delegate void OPC_Monitor();
-        BackgroundWorker Monitor;
         BackgroundWorker ThUpdate;
         bool SecClock;
         bool closed = false;
@@ -28,10 +27,6 @@ namespace Supervisório___Correia
         {  
             InitializeComponent();
             log.Info("Programa Iniciado");
-
-            Monitor = new BackgroundWorker();
-            Monitor.DoWork += OpcMonitor;
-            Monitor.RunWorkerAsync();
 
             ThUpdate = new BackgroundWorker();
             ThUpdate.DoWork += Update;
@@ -71,29 +66,16 @@ namespace Supervisório___Correia
         private void btEmer_Click(object sender, EventArgs e)
         {
             Opc.Emergency = true;
+            Opc.WriteBlock();
         }
-        private void OpcMonitor(object sender, DoWorkEventArgs e)
-        {
-            Delegate read = new OPC_Monitor(Opc.ReadBlock);
-            Delegate write = new OPC_Monitor(Opc.WriteBlock);
-            Thread.Sleep(200);
-
-            while (!closed)
-            {
-                try
-                {
-                    this.Invoke(read);
-                    Thread.Sleep(200);
-                }
-                catch (Exception)
-                {
-                    MessageBox.Show("Falha na leitura");
-                }
-            }
-        }
+        
         private void Update(object sender, DoWorkEventArgs e)
         {
             Thread.Sleep(200);
+
+            Delegate read = new OPC_Monitor(Opc.ReadBlock);
+            Delegate write = new OPC_Monitor(Opc.WriteBlock);
+
             bool _Start = Opc.Start;              //0
             bool _Emergency = Opc.Emergency;          //1
             bool _Opaque = Opc.Opaque;             //2
@@ -106,6 +88,16 @@ namespace Supervisório___Correia
 
             while (!closed)
             {
+                try
+                {
+                    this.Invoke(read);
+                    Thread.Sleep(200);
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Falha na leitura");
+                }
+
                 if (Opc.Busy && SecClock)
                 {
                     this.Invoke(new MethodInvoker(() => pbBusy1.Visible = true));
@@ -174,46 +166,6 @@ namespace Supervisório___Correia
                 this.Invoke(new MethodInvoker(() => lbTransp.Text = Opc.Number_Transparent.ToString()));
                 this.Invoke(new MethodInvoker(() => lbOpac.Text = Opc.Number_Opaque.ToString()));
 
-            }
-        }
-
-        public class VarMonitor
-        {
-            private bool _bVar;
-            public bool bVar
-            {
-                get { return _bVar; }   // get method
-            }
-            private int _iVar;
-            public int iVar
-            {
-                get { return _iVar; }   // get method
-            }
-            public bool ChangeOn;
-            public bool ChangeOff;
-            public bool changeVal;
-
-            public VarMonitor(bool bVar)
-            {
-                _bVar = bVar;
-            }
-            public VarMonitor(int iVar)
-            {
-                _iVar = iVar;
-            }
-
-            public void checkVar(bool bVar)
-            {
-                ChangeOn = _bVar != bVar & bVar == true;
-                ChangeOff = _bVar != bVar & bVar == false;
-
-                _bVar = bVar;
-            }
-            public void checkVar(int iVar)
-            {
-                changeVal = _iVar != iVar;
-
-                _iVar = iVar;
             }
         }
 

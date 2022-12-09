@@ -18,21 +18,13 @@ namespace Supervisório___Correia
         public int Number_Opaque;       //7
         public int Number_Transparent;  //8
 
-        private string[] items_id = { "Channel1.Device1.Start",
-                                    "Channel1.Device1.Emergency",
-                                    "Channel1.Device1.Opaque",
-                                    "Channel1.Device1.Transparent",
-                                    "Channel1.Device1.Error",
-                                    "Channel1.Device1.Reset",
-                                    "Channel1.Device1.Busy",
-                                    "Channel1.Device1.NumOpcOpaque",
-                                    "Channel1.Device1.NumTransp"};
-
+        private string[] items_id = System.IO.File.ReadAllLines(@"ini\OPC.ini");
         private OpcDaGroup group;
-        private OpcDaItemDefinition[] opc_da_items = new OpcDaItemDefinition[9];
+        private OpcDaItemDefinition[] opc_da_items;
 
         public OPC()
         {
+            opc_da_items = new OpcDaItemDefinition[items_id.Length];
             Uri url = UrlBuilder.Build("Kepware.KEPServerEX.V6");
             var server = new OpcDaServer(url);
 
